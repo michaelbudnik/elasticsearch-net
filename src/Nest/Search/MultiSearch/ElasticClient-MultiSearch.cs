@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Elasticsearch.Net;
 using Newtonsoft.Json;
 
 namespace Nest
 {
-	using Elasticsearch.Net.Serialization;
 	using MultiSearchCreator = Func<IApiCallDetails, Stream, MultiSearchResponse>;
 
 	public partial interface IElasticClient
@@ -45,10 +42,9 @@ namespace Nest
 				{
 					var converter = CreateMultiSearchDeserializer(multiSearchRequest);
 					var serializer = new NestSerializer(this.ConnectionSettings, converter);
-					var json = serializer.SerializeToBytes(d).Utf8String();
 					var creator = new MultiSearchCreator((r, s) => serializer.Deserialize<MultiSearchResponse>(s));
 					multiSearchRequest.RequestParameters.DeserializationOverride(creator);
-					return this.LowLevelDispatch.MsearchDispatch<MultiSearchResponse>(p, json);
+					return this.LowLevelDispatch.MsearchDispatch<MultiSearchResponse>(p, d);
 				}
 			);
 		}
@@ -67,10 +63,9 @@ namespace Nest
 				{
 					var converter = CreateMultiSearchDeserializer(multiSearchRequest);
 					var serializer = new NestSerializer(this.ConnectionSettings, converter);
-					var json = serializer.SerializeToBytes(d).Utf8String();
 					var creator = new MultiSearchCreator((r, s) => serializer.Deserialize<MultiSearchResponse>(s));
 					multiSearchRequest.RequestParameters.DeserializationOverride(creator);
-					return this.LowLevelDispatch.MsearchDispatchAsync<MultiSearchResponse>(p, json);
+					return this.LowLevelDispatch.MsearchDispatchAsync<MultiSearchResponse>(p, d);
 				}
 			);
 		}
@@ -83,7 +78,7 @@ namespace Nest
 					CovariantSearch.CloseOverAutomagicCovariantResultSelector(this.Infer, operation);
 			}
 
-			return new MultiSearchResponsJsonConverter(this.ConnectionSettings, request);
+			return new MultiSearchResponseJsonConverter(this.ConnectionSettings, request);
 		}
 	}
 }
