@@ -75,7 +75,8 @@ namespace Nest
 				Formatting = formatting == SerializationFormatting.Indented ? Formatting.Indented : Formatting.None,
 				ContractResolver = new ElasticContractResolver(this._settings),
 				DefaultValueHandling = DefaultValueHandling.Include,
-				NullValueHandling = NullValueHandling.Ignore
+				NullValueHandling = NullValueHandling.Ignore,
+				ReferenceLoopHandling = ReferenceLoopHandling.Serialize
 			};
 
 			_settings.ModifyJsonSerializerSettings?.Invoke(settings);
